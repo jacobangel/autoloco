@@ -5,43 +5,54 @@ const generator = require("babel-generator").default;
 const babylon = require("babylon");
 const t = require("babel-types");
 
-const bundle = {
-  'Hello my man!': '"!Hola, <em>mi</em> homber!"'
-};
-const code = `
-console.log('sup');
-const React = require('react');
-const a = (props) => { return (
-    <div>
-      <t>Hello <b>my</b> man!</t>
-    </div>
-  );
-};
-`;
+function parseReplacement(code) {
+  return babylon.parse(code, {
+    sourceType: "script",
+    plugins: ["jsx"]
+  }).program.body[0].expression;
+}
 
-const ast = babylon.parse(code, {
-  sourceType: "module",
-  plugins: ["jsx"]
-});
+const parseyDude = function(code, bundle) {
+  const ast = babylon.parse(code, {
+    sourceType: "module",
+    plugins: ["jsx"]
+  });
 
-traverse(ast, {
-  JSXElement(path) {
-    if (t.isJSXOpeningElement(path.node.openingElement)) {
-      if (t.isJSXIdentifier(path.node.openingElement.name, {
-        name: 't'
-      })) {
-         // console.log(path);
-         let decl = code.slice(path.node.start + 3, path.node.end - 4);
-         if (bundle[decl]) {
-           path.replaceWithSourceString(bundle[decl])
-         }
-         console.log('substring : ', decl, path.node.start, path.node.end);
-         // path.replaceWithSourceString(bundle);
+  traverse(ast, {
+    JSXElement(path) {
+      if (t.isJSXOpeningElement(path.node.openingElement)) {
+        if (t.isJSXIdentifier(path.node.openingElement.name, {
+          name: 't'
+        })) {
+           let decl = code.slice(path.node.start + 3, path.node.end - 4);
+           if (bundle[decl] !== undefined) {
+             let newNode = parseReplacement('<t>' + bundle[decl] + '</t>');
+             path.replaceWith(newNode);
+           }
+        }
       }
     }
-    // console.log(path);
-  }
-})
+  })
 
-const newCode = generator(ast, null, code);
-console.log(newCode);
+  const translated = generator(ast, null, code);
+  return translated.code;
+}
+
+module.exports = parseyDude;
+
+if (require.main === module) {
+  const bundle = {
+    'Hello <b>my</b> man!': '!Hola, <em>mi</em> homber!'
+  };
+
+  const code = `
+  const React = require('react');
+  const a = (props) => { return (
+      <div>
+        <t>Hello <b>my</b> man!</t>
+      </div>
+    );
+  };
+  `;
+  console.log(parseyDude(code, bundle));
+}
