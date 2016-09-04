@@ -1,4 +1,6 @@
-# racternational
+# Autoloco
 
-is a very simple demonstration of using the most rudimentary assemblage of some
-AST parsing tools, a crude auto-internationalization may be achieved by even me.
+A POC demonstration using the most rudimentary assemblage of AST parsing tools
+which shows that crude auto-internationalization may be achieved even by me.
+
+If you use this you are an idiot.

@@ -1,13 +1,13 @@
 {
-  "name": "racternational",
+  "name": "autoloco",
   "version": "1.0.0",
-  "description": "",
+  "description": "get out",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "jacob.angel@gmail.com",
+  "license": "V A P O R W A R E G L",
   "dependencies": {
     "babel-core": "^6.14.0",
     "babel-generator": "^6.14.0",
